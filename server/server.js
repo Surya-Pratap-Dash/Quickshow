@@ -12,11 +12,14 @@ import userRouter from "./routes/userRoutes.js";
 import { stripeWebhooks } from "./controllers/stripeWebhooks.js";
 
 const app = express();
-const port = 3000;
 
+// CHANGE: Railway sets the PORT automatically. This line handles both local and production.
+const port = process.env.PORT || 3000;
+
+// Connect to Database
 await connectDB();
 
-// Stripe Webhooks Route
+// Stripe Webhooks Route (Must be before express.json() middleware)
 app.use(
   "/api/stripe",
   express.raw({ type: "application/json" }),
@@ -36,6 +39,7 @@ app.use("/api/booking", bookingRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/user", userRouter);
 
+// Start Server
 app.listen(port, () =>
-  console.log(`Server listening at http://localhost:${port}`)
+  console.log(`Server listening on port ${port}`)
 );
