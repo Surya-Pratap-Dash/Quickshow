@@ -13,7 +13,7 @@
 ![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white)
 ![JSON](https://img.shields.io/badge/JSON-000000?style=for-the-badge&logo=json&logoColor=white)
 ![NPM](https://img.shields.io/badge/NPM-CB3837?style=for-the-badge&logo=npm&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
 ![Nodemon](https://img.shields.io/badge/Nodemon-76D04B?style=for-the-badge&logo=nodemon&logoColor=white)
@@ -24,15 +24,11 @@
 
 <br />
 
-## 🎦 LIVE - DEMO 🌐
-  
-**UI** 👉 [LINK](https://quickshow-sigma-roan.vercel.app/)
 
 ![alt text](screencapture-quickshow-sigma-roan-vercel-app-2025-07-04-07_02_38.png)
 
 <br /><hr /><br />
 
-**Admin Dashboard** 👉 [LINK](https://quickshow-sigma-roan.vercel.app/admin)
 
 ![alt text](screencapture-quickshow-sigma-roan-vercel-app-admin-2025-07-04-07_02_14.png)
 
@@ -40,26 +36,11 @@
 
 ---
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [Testing](#testing)
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [API Documentation](#api-documentation)
-- [Configuration](#configuration)
-- [Contributing](#contributing)
-- [License](#license)
-
 ---
 
 ## Overview
 
-**QuickShow** is a modern, full-stack movie ticket booking application built with the MERN stack. It provides users with a seamless experience to discover movies, book tickets, and manage their bookings while offering administrators powerful tools to manage shows, bookings, and movie listings.
+**QuickShow** is a modern, full-stack movie ticket booking application built with React, Express, and MySQL. It provides users with a seamless experience to discover movies, book tickets, and manage their bookings while offering administrators powerful tools to manage shows, bookings, and movie listings.
 
 ### Key Highlights
 
@@ -81,14 +62,14 @@ Before running this application, make sure you have the following installed:
 
 - **Node.js** (v16 or higher)
 - **npm** or **yarn**
-- **MongoDB** (local or cloud instance)
+- **MySQL** (local or cloud instance)
 - **Git**
 
 ### Installation
 
 1. **Clone the repository**
    ```console
-   git clone https://github.com/elyse502/QuickShow.git
+   git clone https://github.com/<Surya-Pratap-Dash>/QuickShow.git
    cd QuickShow
    ```
 
@@ -111,8 +92,11 @@ Before running this application, make sure you have the following installed:
    **Server (.env)**
    ```env
    # 🌐 Database
-   MONGODB_URI=mongodb://localhost:27017/quickshow
-    
+   DB_HOST=localhost
+   DB_USER=root
+   DB_PASS=your-db-password
+   DB_NAME=quickshow_db
+
    # 🔐 Clerk Authentication
    CLERK_PUBLISHABLE_KEY=your-clerk-publishable-key
    CLERK_SECRET_KEY=your-clerk-secret-key
@@ -220,7 +204,6 @@ npm run test
 
 ## Project Structure
 
-```groovy
 quickshow/
 ├── client/                    # Frontend React application
 │   ├── src/
@@ -237,7 +220,7 @@ quickshow/
 │   └── package.json
 ├── server/                    # Backend Node.js application
 │   ├── controllers/           # Route controllers
-│   ├── models/                # MongoDB models
+│   ├── models/                # Database models
 │   ├── routes/                # API routes
 │   ├── middleware/            # Custom middleware
 │   ├── configs/               # Configuration files
@@ -281,7 +264,10 @@ quickshow/
 
 | Variable                 | Description                                            | Required |
 | ------------------------ | ------------------------------------------------------ | -------- |
-| `MONGODB_URI`            | MongoDB connection string                              | ✅        |
+| `DB_HOST`                | MySQL database host                                     | ✅        |
+| `DB_USER`                | MySQL database username                                 | ✅        |
+| `DB_PASS`                | MySQL database password                                 | ✅        |
+| `DB_NAME`                | MySQL database name                                     | ✅        |
 | `CLERK_PUBLISHABLE_KEY`  | Clerk frontend (public) key for user authentication    | ✅        |
 | `CLERK_SECRET_KEY`       | Clerk backend secret key for server‑side auth          | ✅        |
 | `INNGEST_EVENT_KEY`      | Inngest event key for scheduling/triggering jobs       | ✅        |
@@ -294,20 +280,6 @@ quickshow/
 | `SMTP_USER`              | SMTP username (e.g., SendGrid / Mailgun)               | ✅        |
 | `SMTP_PASS`              | SMTP password / API token                              | ✅        |
 
-### Deployment
-
-The application is configured for deployment on Vercel with the included `vercel.json` files.
-
-**Deploy to Vercel:**
-```console
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel --prod
-```
-
----
 
 ## Contributing
 
@@ -327,32 +299,9 @@ vercel --prod
 
 ---
 
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](https://github.com/elyse502/QuickShow/blob/main/LICENSE) file for details.
-
----
-
-## Support
-
-For support, email elyseniyibizi502@gmail.com or create an issue in the GitHub repository.
-
----
-
-## 📞 Contact
-For any questions or support, please contact:
-- [**NIYIBIZI Elysée**](https://linktr.ee/niyibizi_elysee)👨🏿‍💻 | [Github](https://github.com/elyse502) | [Linkedin](https://www.linkedin.com/in/niyibizi-elys%C3%A9e/) | [Twitter](https://twitter.com/Niyibizi_Elyse).
-- **Email**: <elyseniyibizi502@gmail.com>
-
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/niyibizi-elys%C3%A9e/) [![@phenrysay](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/Niyibizi_Elyse) [![pH-7](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/elyse502)
-
----
-
 <div align="center">
 
-**Made with ❤️ by <i>[Elysée NIYIBIZI](https://elyse502.github.io/Elysee-Portfolio/)</i>**
-
-[⬆ Back to Top](#table-of-contents)
+**QuickShow** is a movie ticket booking platform built for easy discovery and secure checkout.
 
 </div>
 
