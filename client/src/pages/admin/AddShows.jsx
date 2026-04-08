@@ -16,6 +16,7 @@ const AddShows = () => {
   const [dateTimeInput, setDateTimeInput] = useState("");
   const [showPrice, setShowPrice] = useState("");
   const [addingShow, setAddingShow] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchNowPlayingMovies = async () => {
     try {
@@ -25,9 +26,13 @@ const AddShows = () => {
 
       if (data.success) {
         setNowPlayingMovies(data.movies);
+      } else {
+        console.error("Failed to fetch now playing movies:", data.message);
       }
     } catch (error) {
       console.error("Error fetching movies:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -107,6 +112,10 @@ const AddShows = () => {
       fetchNowPlayingMovies();
     }
   }, [user]);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return nowPlayingMovies.length > 0 ? (
     <>
@@ -223,7 +232,10 @@ const AddShows = () => {
       </button>
     </>
   ) : (
-    <Loading />
+    <div className="mt-10 text-center text-gray-300">
+      <p>No now playing movies were found right now.</p>
+      <p className="mt-2 text-sm">Please try again later or refresh the page.</p>
+    </div>
   );
 };
 

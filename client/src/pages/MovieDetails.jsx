@@ -12,7 +12,8 @@ import toast from "react-hot-toast";
 const MovieDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [show, setShow] = useState(null);
+  const [movie, setMovie] = useState(null);
+  const [dateTime, setDateTime] = useState({});
 
   const {
     shows,
@@ -27,11 +28,15 @@ const MovieDetails = () => {
   const getShow = async () => {
     try {
       const { data } = await axios.get(`/api/show/${id}`);
-      if (data.success) {
-        setShow(data);
+      if (data.success && data.movie) {
+        setMovie(data.movie);
+        setDateTime(data.dateTime || {});
+      } else {
+        toast.error(data.message || "Movie details not available");
       }
     } catch (error) {
       console.log(error);
+      toast.error("Unable to load movie details.");
     }
   };
 
@@ -58,11 +63,11 @@ const MovieDetails = () => {
     getShow();
   }, [id]);
 
-  return show ? (
+  return movie ? (
     <div className="px-6 md:px-16 lg:px-40 pt-30 md:pt-50">
       <div className="flex flex-col md:flex-row gap-8 max-w-6xl mx-auto">
         <img
-          src={image_base_url + show.movie.poster_path}
+          src={image_base_url + movie.poster_path}
           alt="poster"
           className="max-md:mx-auto rounded-xl h-104 max-w-70 object-cover"
         />
@@ -71,20 +76,20 @@ const MovieDetails = () => {
           <BlurCircle top="-100px" left="-100px" />
           <p className="text-primary">ENGLISH</p>
           <h1 className="text-4xl font-semibold max-w-96 text-balance">
-            {show.movie.title}
+            {movie.title}
           </h1>
           <div className="flex items-center gap-2 text-gray-300">
             <StarIcon className="w-5 h-5 text-primary fill-primary" />
-            {show.movie.vote_average.toFixed(1)} User Rating
+            {movie.vote_average?.toFixed(1)} User Rating
           </div>
           <p className="text-gray-400 mt-2 text-sm leading-tight max-w-xl">
-            {show.movie.overview}
+            {movie.overview}
           </p>
 
           <p>
-            {timeFormat(show.movie.runtime)} •{" "}
-            {show.movie.genres.map((genre) => genre.name).join(", ")} •{" "}
-            {show.movie.release_date.split("-")[0]}
+            {timeFormat(movie.runtime)} •{" "}
+            {movie.genres?.map((genre) => genre.name).join(", ")} •{" "}
+            {movie.release_date?.split("-")[0]}
           </p>
 
           <div className="flex items-center flex-wrap gap-4 mt-4">
@@ -104,7 +109,7 @@ const MovieDetails = () => {
             >
               <Heart
                 className={`w-5 h-5 ${
-                  favoriteMovies.find((movie) => movie._id === id)
+                  favoriteMovies.find((movie) => movie.id === id)
                     ? "fill-primary text-primary"
                     : ""
                 }`}
@@ -117,7 +122,7 @@ const MovieDetails = () => {
       <p className="text-lg fontmedium mt-20">Your Favorite Cast</p>
       <div className="overflow-x-auto no-scrollbar mt-8 pb-4">
         <div className="flex items-center gap-4 w-max px-4">
-          {show.movie.casts.slice(0, 12).map((cast, index) => (
+          {movie.casts?.slice(0, 12).map((cast, index) => (
             <div key={index} className="flex flex-col items-center text-center">
               <img
                 src={image_base_url + cast.profile_path}
@@ -130,7 +135,7 @@ const MovieDetails = () => {
         </div>
       </div>
 
-      <DateSelect dateTime={show.dateTime} id={id} />
+      <DateSelect dateTime={dateTime} id={id} />
 
       <p className="text-lg font-medium mt-20 mb-8">You May Also Like</p>
 
@@ -153,7 +158,9 @@ const MovieDetails = () => {
       </div>
     </div>
   ) : (
-    <Loading />
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <Loading />
+    </div>
   );
 };
 

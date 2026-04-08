@@ -12,7 +12,7 @@ const Movies = () => {
       <h1 className="text-lg font-medium my-4">Now Showing</h1>
       <div className="flex flex-wrap max-sm:justify-center gap-8">
         {shows.map((movie) => (
-          <MovieCard movie={movie} key={movie._id} />
+          <MovieCard movie={movie} key={movie.id} />
         ))}
       </div>
     </div>
