@@ -1,18 +1,25 @@
 import { clerkClient } from "@clerk/express";
+import { Op } from "sequelize";
 import Booking from "../models/Booking.js";
 import Movie from "../models/Movie.js";
+import Show from "../models/Show.js";
 
 // API Controller Function to Get User Bookings
 export const getUserBookings = async (req, res) => {
   try {
     const user = req.auth().userId;
 
-    const bookings = await Booking.find({ user })
-      .populate({
-        path: "show",
-        populate: { path: "movie" },
-      })
-      .sort({ createdAt: -1 });
+    const bookings = await Booking.findAll({
+      where: { userId: user },
+      include: [
+        {
+          model: Show,
+          as: "show",
+          include: [{ model: Movie, as: "movie" }],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
 
     res.json({ success: true, bookings });
   } catch (error) {
@@ -56,10 +63,11 @@ export const updateFavorite = async (req, res) => {
 export const getFavorites = async (req, res) => {
   try {
     const user = await clerkClient.users.getUser(req.auth().userId);
-    const favorites = user.privateMetadata.favorites;
+    const favorites = user.privateMetadata.favorites || [];
 
-    // Getting movies from database
-    const movies = await Movie.find({ _id: { $in: favorites } });
+    const movies = favorites.length
+      ? await Movie.findAll({ where: { id: favorites } })
+      : [];
 
     res.json({ success: true, movies });
   } catch (error) {

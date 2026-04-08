@@ -1,18 +1,21 @@
-import nodemailer from 'nodemailer';
+// FIX: Remove the '.js' from the package import
+import nodemailer from 'nodemailer'; 
 import 'dotenv/config';
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail', // Shorthand for smtp.gmail.com/465/secure
+  service: 'gmail', 
   auth: {
     user: process.env.EMAIL_ID, 
-    pass: process.env.EMAIL_PASSWORD, // Must be the 16-character App Password
+    // This MUST be a 16-character Google App Password, not your login password
+    pass: process.env.EMAIL_PASSWORD, 
   },
 });
 
-// Verification step to ensure your .env credentials actually work
+// Verification step
 transporter.verify((error) => {
   if (error) {
     console.log("Email System: ❌ Configuration Error. Check your App Password.");
+    console.error(error);
   } else {
     console.log("Email System: ✅ Ready to send booking confirmations.");
   }

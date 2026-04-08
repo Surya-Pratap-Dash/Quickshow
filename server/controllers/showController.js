@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Op } from "sequelize";
 import Movie from "../models/Movie.js";
 import Show from "../models/Show.js";
 import { inngest } from "../inngest/index.js";
@@ -26,7 +27,7 @@ export const addShow = async (req, res) => {
   try {
     const { movieId, showsInput, showPrice } = req.body;
 
-    let movie = await Movie.findById(movieId);
+    let movie = await Movie.findByPk(movieId);
 
     if (!movie) {
       // Fetch movie details and credits from TMDB API
@@ -44,7 +45,7 @@ export const addShow = async (req, res) => {
       const movieCreditsData = movieCreditsResponse.data;
 
       const movieDetails = {
-        _id: movieId,
+        id: movieId,
         title: movieApiData.title,
         overview: movieApiData.overview,
         poster_path: movieApiData.poster_path,
@@ -58,7 +59,6 @@ export const addShow = async (req, res) => {
         runtime: movieApiData.runtime,
       };
 
-      //   Add movie to the database
       movie = await Movie.create(movieDetails);
     }
 
@@ -68,16 +68,16 @@ export const addShow = async (req, res) => {
       show.time.forEach((time) => {
         const dateTimeString = `${showDate}T${time}`;
         showsToCreate.push({
-          movie: movieId,
+          movieId,
           showDateTime: new Date(dateTimeString),
           showPrice,
-          occupiedSeats: {}, // Initialize with empty object
+          occupiedSeats: {},
         });
       });
     });
 
     if (showsToCreate.length > 0) {
-      await Show.insertMany(showsToCreate);
+      await Show.bulkCreate(showsToCreate);
     }
 
     // Trigger Inngest event
@@ -96,14 +96,20 @@ export const addShow = async (req, res) => {
 // API to get all shows from the database
 export const getShows = async (req, res) => {
   try {
-    const shows = await Show.find({ showDateTime: { $gte: new Date() } })
-      .populate("movie")
-      .sort({ showDateTime: 1 });
+    const shows = await Show.findAll({
+      where: { showDateTime: { [Op.gte]: new Date() } },
+      include: [{ model: Movie, as: "movie" }],
+      order: [["showDateTime", "ASC"]],
+    });
 
-    // filter unique shows
-    const uniqueShows = new Set(shows.map((show) => show.movie));
+    const uniqueMovies = new Map();
+    shows.forEach((show) => {
+      if (show.movie && !uniqueMovies.has(show.movie.id)) {
+        uniqueMovies.set(show.movie.id, show.movie);
+      }
+    });
 
-    res.json({ success: true, shows: Array.from(uniqueShows) });
+    res.json({ success: true, shows: Array.from(uniqueMovies.values()) });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
@@ -114,13 +120,14 @@ export const getShows = async (req, res) => {
 export const getShow = async (req, res) => {
   try {
     const { movieId } = req.params;
-    // get all upcoming shows for the movie
-    const shows = await Show.find({
-      movie: movieId,
-      showDateTime: { $gte: new Date() },
+    const shows = await Show.findAll({
+      where: {
+        movieId,
+        showDateTime: { [Op.gte]: new Date() },
+      },
     });
 
-    const movie = await Movie.findById(movieId);
+    const movie = await Movie.findByPk(movieId);
     const dateTime = {};
 
     shows.forEach((show) => {
@@ -129,7 +136,7 @@ export const getShow = async (req, res) => {
         dateTime[date] = [];
       }
 
-      dateTime[date].push({ time: show.showDateTime, showId: show._id });
+      dateTime[date].push({ time: show.showDateTime, showId: show.id });
     });
 
     res.json({ success: true, movie, dateTime });

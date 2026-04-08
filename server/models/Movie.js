@@ -1,23 +1,63 @@
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/db.js";
 
-const movieSchema = new mongoose.Schema(
+const Movie = sequelize.define(
+  "Movie",
   {
-    _id: { type: String, required: true },
-    title: { type: String, required: true },
-    overview: { type: String, required: true },
-    poster_path: { type: String, required: true },
-    backdrop_path: { type: String, required: true },
-    release_date: { type: String, required: true },
-    original_language: { type: String },
-    tagline: { type: String },
-    genres: { type: Array, required: true },
-    casts: { type: Array, required: true },
-    vote_average: { type: Number, required: true },
-    runtime: { type: Number, required: true },
+    id: {
+      type: DataTypes.STRING,
+      primaryKey: true,
+      allowNull: false,
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    overview: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    poster_path: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    backdrop_path: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    release_date: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    original_language: {
+      type: DataTypes.STRING,
+    },
+    tagline: {
+      type: DataTypes.STRING,
+    },
+    genres: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      defaultValue: [],
+    },
+    casts: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      defaultValue: [],
+    },
+    vote_average: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+    },
+    runtime: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    tableName: "Movies",
+  }
 );
-
-const Movie = mongoose.model("Movie", movieSchema);
 
 export default Movie;

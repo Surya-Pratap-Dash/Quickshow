@@ -1,15 +1,41 @@
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/db.js";
+import Movie from "./Movie.js";
 
-const showSchema = new mongoose.Schema(
+const Show = sequelize.define(
+  "Show",
   {
-    movie: { type: String, required: true, ref: "Movie" },
-    showDateTime: { type: Date, required: true },
-    showPrice: { type: Number, required: true },
-    occupiedSeats: { type: Object, default: {} },
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+      allowNull: false,
+    },
+    movieId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    showDateTime: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    showPrice: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+    },
+    occupiedSeats: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      defaultValue: {},
+    },
   },
-  { minimize: false }
+  {
+    timestamps: true,
+    tableName: "Shows",
+  }
 );
 
-const Show = mongoose.model("Show", showSchema);
+Show.belongsTo(Movie, { foreignKey: "movieId", as: "movie" });
+Movie.hasMany(Show, { foreignKey: "movieId", as: "shows" });
 
 export default Show;
