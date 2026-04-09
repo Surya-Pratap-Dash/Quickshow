@@ -1,0 +1,35 @@
+@echo off
+REM QuickShow Webhook Setup Guide for Windows
+
+echo 🚀 QuickShow Webhook Testing Guide
+echo ==================================
+echo.
+echo ⚠️  For local development, you MUST run Inngest Dev Server
+echo.
+echo Step 1: Install Inngest CLI (one-time only)
+echo   npm install -g inngest-cli
+echo.
+echo Step 2: Start Inngest Dev Server (in one terminal)
+echo   inngest dev
+echo.
+echo Step 3: Start Your Server (in another terminal)
+echo   cd server
+echo   npm start
+echo.
+echo Step 4: Update Clerk Webhook in Dashboard
+echo   Go to https://dashboard.clerk.com
+echo   Webhooks ^> Edit endpoint
+echo   Change URL to: http://localhost:8288/api/inngest
+echo.
+echo Step 5: Create Test User in Clerk
+echo   Users ^> Create User
+echo.
+echo Step 6: Check if User Was Created
+echo   curl http://localhost:3000/api/test/all-users
+echo.
+echo Step 7: View Webhook Events Received
+echo   curl http://localhost:3000/api/debug/clerk-webhooks
+echo.
+echo ✅ Done!
+echo.
+pause

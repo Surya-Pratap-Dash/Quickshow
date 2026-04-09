@@ -1,0 +1,18 @@
+{
+  "name": "quickshow",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Movie Ticket Booking Application",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm --prefix client run dev\" \"npm --prefix server start\"",
+    "build": "npm --prefix client run build",
+    "build:all": "npm --prefix client run build && npm --prefix server",
+    "start": "npm --prefix server start",
+    "vercel-build": "npm --prefix client run build",
+    "install-all": "npm install && npm --prefix client install && npm --prefix server install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

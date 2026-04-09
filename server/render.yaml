@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: quickshow-server
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      # Database Configuration (Add these in Render dashboard)
+      # - key: DB_HOST
+      #   value: your-aiven-host
+      # - key: DB_USER
+      #   value: your-aiven-user
+      # - key: DB_PASS
+      #   value: your-aiven-password
+      # - key: DB_NAME
+      #   value: your-aiven-database
+      # - key: DB_PORT
+      #   value: 23918
+      # Clerk Configuration
+      # - key: CLERK_SECRET_KEY
+      #   value: your-clerk-secret
+      # - key: CLERK_PUBLISHABLE_KEY
+      #   value: your-clerk-publishable
+      # Email Configuration
+      # - key: EMAIL_ID
+      #   value: your-email
+      # - key: EMAIL_PASSWORD
+      #   value: your-email-password
+      # Stripe Configuration
+      # - key: STRIPE_SECRET_KEY
+      #   value: your-stripe-secret
+      # - key: STRIPE_PUBLISHABLE_KEY
+      #   value: your-stripe-publishable
+      # TMDB Configuration
+      # - key: TMDB_API_KEY
+      #   value: your-tmdb-key
+      # Inngest Configuration
+      # - key: INNGEST_EVENT_KEY
+      #   value: your-inngest-event-key
+      # - key: INNGEST_SIGNING_KEY
+      #   value: your-inngest-signing-key
+      # Frontend URL (will be your Vercel URL)
+      # - key: FRONTEND_URL
+      #   value: https://your-vercel-app.vercel.app

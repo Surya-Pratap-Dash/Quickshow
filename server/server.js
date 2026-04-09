@@ -56,9 +56,63 @@ app.use(
 );
 
 // Middleware
-app.use(express.json());
-app.use(cors());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// CORS Configuration for Vercel (both server and client on same domain)
+const corsOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'localhost:5173',
+  process.env.FRONTEND_URL || process.env.VERCEL_URL || 'http://localhost:3000'
+].filter(Boolean);
+
+app.use(cors({
+  origin: corsOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(clerkMiddleware());
+
+// 🔔 CLERK WEBHOOK DEBUGGING ENDPOINT
+// This captures all Clerk webhook events before Inngest processes them
+app.post("/api/debug/clerk-webhook", (req, res) => {
+  const event = req.body;
+  console.log("\n🔔 [Clerk Webhook] Received event");
+  console.log("📋 Event type:", event.type);
+  console.log("📦 Full payload:", JSON.stringify(event, null, 2));
+  console.log("✅ Webhook received and logged\n");
+  res.json({ success: true, message: "Webhook logged" });
+});
+
+// Get Clerk webhook events log
+let clerkWebhookLog = [];
+app.post("/api/debug/log-clerk-webhook", (req, res) => {
+  const event = req.body;
+  clerkWebhookLog.push({
+    timestamp: new Date().toISOString(),
+    type: event.type,
+    userId: event.data?.id,
+    email: event.data?.email_addresses?.[0]?.email_address,
+    firstName: event.data?.first_name,
+    fullPayload: event
+  });
+  // Keep only last 50 events
+  clerkWebhookLog = clerkWebhookLog.slice(-50);
+  console.log(`📊 [Webhook Log] Event stored. Total: ${clerkWebhookLog.length}`);
+  res.json({ success: true, logged: true });
+});
+
+// View all Clerk webhook events
+app.get("/api/debug/clerk-webhooks", (req, res) => {
+  console.log(`📊 [Webhook Log] Returning ${clerkWebhookLog.length} events`);
+  res.json({
+    total: clerkWebhookLog.length,
+    events: clerkWebhookLog,
+    message: "These are all Clerk webhook events received since server started"
+  });
+});
 
 // 🧪 DIAGNOSTIC ENDPOINTS
 // Test if database is working - manually create a test user
