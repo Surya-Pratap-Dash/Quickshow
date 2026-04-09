@@ -12,15 +12,35 @@ const syncUserCreation = inngest.createFunction(
   { id: "sync-user-from-clerk" },
   { event: "clerk/user.created" },
   async ({ event }) => {
-    const { id, first_name, last_name, email_addresses, image_url } =
-      event.data;
-    const userData = {
-      id,
-      email: email_addresses[0].email_address,
-      name: `${first_name} ${last_name}`,
-      image: image_url,
-    };
-    await User.create(userData);
+    try {
+      console.log("🔔 [Inngest] Received clerk/user.created event");
+      console.log("📦 Event data:", JSON.stringify(event.data, null, 2));
+
+      const { id, first_name, last_name, email_addresses, image_url } =
+        event.data;
+      
+      if (!id || !email_addresses || email_addresses.length === 0) {
+        console.error("❌ [Inngest] Missing required user data:", { id, email_addresses });
+        throw new Error("Missing required user data from Clerk");
+      }
+
+      const userData = {
+        id,
+        email: email_addresses[0].email_address,
+        name: `${first_name} ${last_name}`,
+        image: image_url,
+      };
+      
+      console.log("💾 [Inngest] Creating user with data:", userData);
+      const createdUser = await User.create(userData);
+      console.log("✅ [Inngest] User created successfully:", createdUser.toJSON());
+      
+      return { success: true, userId: createdUser.id };
+    } catch (error) {
+      console.error("❌ [Inngest] Error creating user:", error.message);
+      console.error("📋 Error details:", error);
+      throw error; // Re-throw so Inngest knows it failed
+    }
   }
 );
 
@@ -28,8 +48,17 @@ const syncUserDeletion = inngest.createFunction(
   { id: "delete-user-with-clerk" },
   { event: "clerk/user.deleted" },
   async ({ event }) => {
-    const { id } = event.data;
-    await User.destroy({ where: { id } });
+    try {
+      console.log("🔔 [Inngest] Received clerk/user.deleted event");
+      const { id } = event.data;
+      console.log("🗑️  [Inngest] Deleting user:", id);
+      const result = await User.destroy({ where: { id } });
+      console.log("✅ [Inngest] User deleted successfully. Rows affected:", result);
+      return { success: true, deletedCount: result };
+    } catch (error) {
+      console.error("❌ [Inngest] Error deleting user:", error.message);
+      throw error;
+    }
   }
 );
 
@@ -37,14 +66,23 @@ const syncUserUpdation = inngest.createFunction(
   { id: "update-user-from-clerk" },
   { event: "clerk/user.updated" },
   async ({ event }) => {
-    const { id, first_name, last_name, email_addresses, image_url } =
-      event.data;
-    const userData = {
-      email: email_addresses[0].email_address,
-      name: `${first_name} ${last_name}`,
-      image: image_url,
-    };
-    await User.update(userData, { where: { id } });
+    try {
+      console.log("🔔 [Inngest] Received clerk/user.updated event");
+      const { id, first_name, last_name, email_addresses, image_url } =
+        event.data;
+      const userData = {
+        email: email_addresses[0].email_address,
+        name: `${first_name} ${last_name}`,
+        image: image_url,
+      };
+      console.log("✏️  [Inngest] Updating user:", id);
+      const [updatedCount] = await User.update(userData, { where: { id } });
+      console.log("✅ [Inngest] User updated successfully. Rows affected:", updatedCount);
+      return { success: true, updatedCount };
+    } catch (error) {
+      console.error("❌ [Inngest] Error updating user:", error.message);
+      throw error;
+    }
   }
 );
 
