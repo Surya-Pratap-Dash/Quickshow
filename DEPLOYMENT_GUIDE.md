@@ -52,7 +52,7 @@ Add these in Render dashboard (Settings → Environment):
 # Database (Aiven MySQL)
 DB_HOST=quickshowdb-767-suryadashpratap-07e5.i.aivencloud.com
 DB_USER=avnadmin
-DB_PASS=YOUR_DB_PASSWORD  # Your actual password
+DB_PASS= # Your actual password
 DB_NAME=quickshow_db
 DB_PORT=23918
 

@@ -116,7 +116,7 @@ Add the following variables:
 # Database (Copy from your Aiven account)
 DB_HOST=quickshowdb-767-suryadashpratap-07e5.i.aivencloud.com
 DB_USER=avnadmin
-DB_PASS=YOUR_DB_PASSWORD
+DB_PASS=
 DB_NAME=quickshow_db
 DB_PORT=23918
 
